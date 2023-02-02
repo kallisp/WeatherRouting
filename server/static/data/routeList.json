@@ -1,0 +1,77 @@
+[
+    {
+        "value": "1_to_129",
+        "from": "Athens",
+        "to": "Cairo"
+    },
+    {
+        "value": "1_to_96",
+        "from": "Athens",
+        "to": "Messina"
+    },
+    {
+        "value": "1_to_69",
+        "from": "Athens",
+        "to": "Valencia"
+    },
+    {
+        "value": "125_to_174",
+        "from": "Gibraltar",
+        "to": "Cagliari"
+    },
+    {
+        "value": "125_to_91",
+        "from": "Gibraltar",
+        "to": "Genoa"
+    },
+    {
+        "value": "51_to_182",
+        "from": "Izmir",
+        "to": "Tripoli"
+    },
+    {
+        "value": "13_to_253",
+        "from": "Istanbul",
+        "to": "Valencia"
+    },
+    {
+        "value": "108_to_9",
+        "from": "Malta",
+        "to": "Adana"
+    },
+    {
+        "value": "108_to_222",
+        "from": "Malta",
+        "to": "Neapoli"
+    },
+    {
+        "value": "130_to_288",
+        "from": "Marseille",
+        "to": "Algeria"
+    },
+    {
+        "value": "130_to_64",
+        "from": "Marseille",
+        "to": "Tunisia"
+    },
+    {
+        "value": "12_to_5",
+        "from": "Napoli",
+        "to": "Amman"
+    },
+    {
+        "value": "118_to_50",
+        "from": "Port Said",
+        "to": "Genoa"
+    },
+    {
+        "value": "107_to_4",
+        "from": "Tripoli Libya",
+        "to": "Barcelona"
+    },
+    {
+        "value": "107_to_17",
+        "from": "Tripoli Libya",
+        "to": "Izmir"
+    }
+]
