@@ -93,7 +93,7 @@ window.addEventListener('load', async (event) => {
     //create proposed polyline
     let proposedRoutePolyline = L.polyline([], {
         color: 'yellow',
-        weight: 2
+        weight: 2.5
     }).addTo(map);
 
     async function createRoutesList() {
@@ -474,7 +474,7 @@ window.addEventListener('load', async (event) => {
             this._popupInitRoute.setContent(popupInitRouteContent);
 
             //check the weather thresholds 
-            if ((initWaveHeight < 4.5) || (initWavePeriod < 8) || (initWindSpeed < 19)) { 
+            if ((initWaveHeight < 4.5 || initWavePeriod < 8) && (initWindSpeed < 19)) { 
                 proposedRoutePolylineCenters.push([lat, lon]);
                 this._proposedPolylineMarker.removeFrom(this._baseLayer);
             }
@@ -498,12 +498,11 @@ window.addEventListener('load', async (event) => {
                                 const y = Math.sin(destLon - startLon) * Math.cos(destLat);
                                 const x = Math.cos(startLat) * Math.sin(destLat) - Math.sin(startLat) * Math.cos(destLat) * Math.cos(destLon - startLon);
 
-                                const angleDegProposed = Math.atan2(x, y) * 180 / Math.PI;
+                                const angleDegProposed = Math.atan2(x, y) * 180 / Math.PI; //angle in degress from north
 
                                 const proposedLatCheck = newLat;
                                 const proposedLonCheck = newLng;
                                 const proposedHeadingCheck = angleDegProposed;
-                                //const acceptedDistance = speed * 3 // the accepted distance is calculated for the next 3h which is our timestamp
 
                                 //get relative angle between ship's heading in proposed route and wave direction
                                 const proposedRouteDataCheck = await httpClient.getData(`/proposedRouteHeading/coords/${proposedLonCheck}:${proposedLatCheck}/heading/${proposedHeadingCheck}/time/${timestamp}`);

@@ -1,7 +1,6 @@
 # README #
 
 ## Weather Routing App ##
-<br>
 
 ### Download Weather Data from Copernicus C3S and CMEMS Services ###
 <br>

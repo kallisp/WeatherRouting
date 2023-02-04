@@ -82,7 +82,7 @@ def initialRoute(lon, lat, heading, timestamp):
 
 
 @app.route('/proposedRoute/coords/<lon>:<lat>/heading/<heading>/time/<timestamp>', methods=['GET'])     
-def proposedRoute(lon, lat, heading, timestamp):  #speed1
+def proposedRoute(lon, lat, heading, timestamp):  
     conn = get_db_connection()
     cur = conn.cursor()
     cur.execute("""SELECT latitude, longitude, vhm0, ABS(vmdr - %s), vmdr, vtm10, speed FROM climate
