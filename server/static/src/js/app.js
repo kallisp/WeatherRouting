@@ -1,6 +1,5 @@
 let convexPolyCenter = [];
 const polygonVessels = {};
-let currentPolyline = null;
 const distancePolyArray = [];
 let selectedItinerary = null;
 let selectedItineraryText = null
@@ -12,9 +11,6 @@ let baseTimestamp = null;
 const hourInterval = 3;
 const ROUTE_SELECTED_EVENT = 'route-selected';
 const ROUTE_LAYER_ID = 'route-layer';
-let routeData = [];
-let arrowCoordsObj = {};
-let arrowInstanceCoords = [];
 let proposedRoute = [];
 let sumProposedRouteDistance = 0;
 let sumInitialRouteDistance = 0;
@@ -382,10 +378,31 @@ window.addEventListener('load', async (event) => {
         }
     }
 
-    //get route info when a itinerary is selected
-    function getSelectedItinerary(value, label) {
+    function reset() {
         sumInitialRouteDistance = 0;
         sumProposedRouteDistance = 0;
+        decreaseWH = 0;
+        decreaseWP = 0;
+        decreaseWD = 0;
+        decreaseWS = 0;
+        decreaseWHArray = [];
+        decreaseWPArray = [];
+        decreaseWDArray = [];
+        decreaseWSArray = [];
+        avgDecreaseWH = 0;
+        avgDecreaseWP = 0;
+        avgDecreaseWD = 0;
+        avgDecreaseWS = 0;
+        sumWH = 0;
+        sumWP = 0;
+        sumWD = 0;
+        sumWS = 0;
+        routeLengthDiff = 0;
+    }
+
+    //get route info when a itinerary is selected
+    function getSelectedItinerary(value, label) {
+        reset();
         selectedItinerary = value;
         selectedItineraryText = label;
         const detail = {
@@ -443,7 +460,6 @@ window.addEventListener('load', async (event) => {
                     //Calculate Haversine distance (in km) between points of the Initial Route
                     let InitialDistance = getDistanceFromLatLonInKm(startLatInit, startLonInit, destLatInit, destLonInit)
                     sumInitialRouteDistance += InitialDistance;
-                    console.log("Initial: " + sumInitialRouteDistance);
                 }
             }
 
@@ -474,7 +490,7 @@ window.addEventListener('load', async (event) => {
             this._popupInitRoute.setContent(popupInitRouteContent);
 
             //check the weather thresholds 
-            if ((initWaveHeight < 4.5 || initWavePeriod < 8) && (initWindSpeed < 19)) { 
+            if ((initWaveHeight < 4.5 || initWavePeriod < 8) && (initWindSpeed < 19)) {
                 proposedRoutePolylineCenters.push([lat, lon]);
                 this._proposedPolylineMarker.removeFrom(this._baseLayer);
             }
@@ -521,7 +537,7 @@ window.addEventListener('load', async (event) => {
                                     const propWavePeriod = proposedRoute[5];
                                     const propWaveAngle = proposedRoute[3];
                                     const propWindSpeed = proposedRoute[6];
-
+                                    console.log(initWindSpeed, propWindSpeed);
                                     //Calculate route statistics
                                     decreaseWH = (initWaveHeight - propWaveHeight) / initWaveHeight * 100;
                                     decreaseWP = (initWavePeriod - propWavePeriod) / initWavePeriod * 100;
@@ -551,7 +567,6 @@ window.addEventListener('load', async (event) => {
                 //Calculate Haversine distance (in km) between points of the Proposed Route
                 let proposedDistance = getDistanceFromLatLonInKm(startPropLat, startPropLon, destPropLat, destPropLon)
                 sumProposedRouteDistance += proposedDistance;
-                console.log("Proposed: " + sumProposedRouteDistance);
             }
 
             //check if route has been completed in order to calculate the statistics regarding the risk decrease
@@ -571,13 +586,21 @@ window.addEventListener('load', async (event) => {
                     sumWD += d
                 });
                 avgDecreaseWD = sumWD / decreaseWDArray.length;
-
-                if (decreaseWSArray.length > 0) {
-                    decreaseWSArray.forEach((s) => {
+                
+                decreaseWSArray.forEach((s) => {
                         sumWS += s
                     });
-                    avgDecreaseWS = sumWS / decreaseWSArray.length;
+                avgDecreaseWS = sumWS / decreaseWSArray.length;
+                
+                let prefix = null;
+
+                if (avgDecreaseWS > 0) {
+                    prefix = 'Decrease'
+                } else {
+                    prefix = 'Increase';
+                    avgDecreaseWS = Math.abs(avgDecreaseWS);
                 }
+
                 routeLengthDiff = (sumProposedRouteDistance - sumInitialRouteDistance) / sumInitialRouteDistance * 100;
 
                 statisticsPopupContent = `
@@ -585,7 +608,7 @@ window.addEventListener('load', async (event) => {
                 <b>Wave Height Decrease : </b> ${avgDecreaseWH.toFixed(2)}% <br>
                 <b>Wave Period Decrease : </b> ${avgDecreaseWP.toFixed(2)}% <br>
                 <b>Wave Direction Deviation : </b> ${avgDecreaseWD.toFixed(2)}% <br>
-                <b>Wind Speed Decrease : </b> ${avgDecreaseWS.toFixed(2)}% <br>
+                <b>Wind Speed ${prefix} : </b> ${avgDecreaseWS.toFixed(2)}% <br>
                 <hr/>
                 <b style = "color: #c62828">Route Length Increase: </b> ${routeLengthDiff.toFixed(2)}% <br>
                 `
@@ -607,7 +630,7 @@ window.addEventListener('load', async (event) => {
 //Calculate distance (in km) from geographical coords 
 function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
     const R = 6371; // Radius of the earth in km
-    const dLat = deg2rad(lat2 - lat1);  
+    const dLat = deg2rad(lat2 - lat1);
     const dLon = deg2rad(lon2 - lon1);
     const a =
         Math.sin(dLat / 2) * Math.sin(dLat / 2) +

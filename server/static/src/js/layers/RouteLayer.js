@@ -66,7 +66,7 @@ class RouteLayer {
 
 
                 //Define the popup for initial route
-                this._popupInitRoute = L.popup({ autoClose: true })
+                this._popupInitRoute = L.popup({ autoClose: true, className : 'popup-init-route' })
                 this._polyline.bindPopup(this._popupInitRoute);
 
                 if (this._timeDimension) {

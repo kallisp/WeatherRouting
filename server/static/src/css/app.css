@@ -44,6 +44,20 @@ hr {
   color: #283593;
 }
 
+.leaflet-popup.popup-init-route .leaflet-popup-content-wrapper {
+  position: relative;
+  left: 130px;
+}
+
+.leaflet-popup.popup-init-route .leaflet-popup-tip-container {
+  left: 52%;
+}
+
+.leaflet-popup.popup-init-route .leaflet-popup-close-button {
+  left: 385px;
+}
+
+
 .leaflet-touch .leaflet-control-layers, .leaflet-touch .leaflet-bar {
   border: none;
 }

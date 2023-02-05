@@ -2,6 +2,9 @@
 
 ## Weather Routing App ##
 
+Weather Routing App employs a novel weather routing optimization DS framework that aims to identify excessive motions and accelerations caused by adverse weather conditions at specific times and locations. For each route, it suggests the nearest alternative route that meets the acceptable weather conditions and, thus, ultimately prevents cargo loss and damage.
+<br>
+
 ### Download Weather Data from Copernicus C3S and CMEMS Services ###
 <br>
 
@@ -14,11 +17,10 @@ pip install -r requirements.txt
 
 * In order to download wave data from CMEMS service, you have to register: 
 https://data.marine.copernicus.eu/register
-
 <br>
 
 
-## Instructions for downloading weather data in Linux ##
+## Instructions to download weather data in Linux ##
 
 * Copy the .cdsapirc file to home directory (contains url/key creds for C3S Copernicus service)
 
@@ -26,7 +28,7 @@ https://data.marine.copernicus.eu/register
 cp .cdsapirc /home
 ```
 
-* Run download_netCDF.py
+* Run download_netCDF.py. You will be asked to provide the CMEMS credentials
 ```bash
 python download_netCDF.py
 ```
@@ -41,7 +43,7 @@ python download_netCDF.py
 * Manually Install PostgreSQL (app runs in version 13)
 </br>
 
-* Run init_db.py in order to create DB as well as tables and indexing
+* Run init_db.py in order to add extensions, create DB as well as tables and indexing
 
 ```bash
 python init_db.py
