@@ -490,7 +490,7 @@ window.addEventListener('load', async (event) => {
             this._popupInitRoute.setContent(popupInitRouteContent);
 
             //check the weather thresholds 
-            if ((initWaveHeight < 4.5 || initWavePeriod < 8) && (initWindSpeed < 19)) {
+            if ((initWaveHeight < 4.5 || initWavePeriod < 8) && (initWindSpeed < 19 || ((initWaveAngle < 60 || initWaveAngle > 115) && (initWaveAngle < 235 || initWaveAngle > 270)))) {
                 proposedRoutePolylineCenters.push([lat, lon]);
                 this._proposedPolylineMarker.removeFrom(this._baseLayer);
             }
