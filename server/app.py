@@ -40,7 +40,7 @@ def wind(timestamp):
 def wave(timestamp):  
     conn = get_db_connection()
     cur = conn.cursor()
-    cur.execute("SELECT latitude, longitude, vmdr FROM waveDir05 WHERE (ts=%s AND vmdr IS NOT NULL) ORDER BY id ASC", [timestamp])
+    cur.execute("SELECT latitude, longitude, vmdr FROM wavedir05 WHERE (ts=%s AND vmdr IS NOT NULL) ORDER BY id ASC", [timestamp])
     
     waveDirectionData = cur.fetchall()
     cur.close()
@@ -80,15 +80,16 @@ def initialRoute(lon, lat, heading, timestamp):
         return jsonify(initialRouteData) 
     return jsonify([])
 
-
 @app.route('/proposedRoute/coords/<lon>:<lat>/heading/<heading>/time/<timestamp>', methods=['GET'])     
 def proposedRoute(lon, lat, heading, timestamp):  
     conn = get_db_connection()
     cur = conn.cursor()
-    cur.execute("""SELECT latitude, longitude, vhm0, ABS(vmdr - %s), vmdr, vtm10, speed FROM climate
-                    WHERE (ts=%s AND (vhm0<4.5 AND vtm10<8  AND speed<19)) 
-                    ORDER BY geom::geometry <-> 'SRID=4326;POINT(%s %s)'::geometry LIMIT 10""",             
-                    (float(heading), timestamp, float(lon), float(lat)))                                     
+    cur.execute("""SELECT latitude, longitude, vhm0, encounterangle, vmdr, vtm10, speed FROM (
+                   SELECT ts, latitude, longitude, vhm0, vmdr, vtm10, speed, geom, ABS(vmdr - %s) as encounterangle 
+	               FROM climate) AS c
+                   WHERE (ts=%s AND vhm0<4.5 AND vtm10<8  AND speed<19 AND (encounterangle < 60 OR encounterangle > 115) AND (encounterangle < 235 OR encounterangle > 270)) 
+                   ORDER BY geom::geometry <-> 'SRID=4326;POINT(%s %s)'::geometry LIMIT 10""",             
+                   (float(heading), timestamp, float(lon), float(lat)))                                     
     proposedRoutData = cur.fetchall()                                                                       
     cur.close()
     conn.close()  

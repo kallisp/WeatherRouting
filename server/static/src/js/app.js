@@ -497,58 +497,54 @@ window.addEventListener('load', async (event) => {
             else {
                 for (i = 0; i <= proposedRouteData.length - 1; i++) {
                     if (found == false) {
-                        //Relative angle between ship's heading and wave direction
-                        encounterAngleInitial = proposedRouteData[i][3];
-                        if ((encounterAngleInitial < 60 || encounterAngleInitial > 115) && (encounterAngleInitial < 235 || encounterAngleInitial > 270)) {
-                            let newLat = proposedRouteData[i][0];
-                            let newLng = proposedRouteData[i][1];
-                            const newPolyCenter = [newLat, newLng]
+                        let newLat = proposedRouteData[i][0];
+                        let newLng = proposedRouteData[i][1];
+                        const newPolyCenter = [newLat, newLng]
 
-                            //Calculate the bearing angle between two successive waypoints of the proposed route 
-                            if (proposedRoutePolylineCenters.length > 0) {
-                                const startLat = proposedRoutePolylineCenters[proposedRoutePolylineCenters.length - 1][0]
-                                const startLon = proposedRoutePolylineCenters[proposedRoutePolylineCenters.length - 1][1]
-                                const destLat = newLat
-                                const destLon = newLng
+                        //Calculate the bearing angle between two successive waypoints of the proposed route 
+                        if (proposedRoutePolylineCenters.length > 0) {
+                            const startLat = proposedRoutePolylineCenters[proposedRoutePolylineCenters.length - 1][0]
+                            const startLon = proposedRoutePolylineCenters[proposedRoutePolylineCenters.length - 1][1]
+                            const destLat = newLat
+                            const destLon = newLng
 
-                                const y = Math.sin(destLon - startLon) * Math.cos(destLat);
-                                const x = Math.cos(startLat) * Math.sin(destLat) - Math.sin(startLat) * Math.cos(destLat) * Math.cos(destLon - startLon);
+                            const y = Math.sin(destLon - startLon) * Math.cos(destLat);
+                            const x = Math.cos(startLat) * Math.sin(destLat) - Math.sin(startLat) * Math.cos(destLat) * Math.cos(destLon - startLon);
 
-                                const angleDegProposed = Math.atan2(x, y) * 180 / Math.PI; //angle in degress from north
+                            const angleDegProposed = Math.atan2(x, y) * 180 / Math.PI; //angle in degress from north
 
-                                const proposedLatCheck = newLat;
-                                const proposedLonCheck = newLng;
-                                const proposedHeadingCheck = angleDegProposed;
+                            const proposedLatCheck = newLat;
+                            const proposedLonCheck = newLng;
+                            const proposedHeadingCheck = angleDegProposed;
 
-                                //get relative angle between ship's heading in proposed route and wave direction
-                                const proposedRouteDataCheck = await httpClient.getData(`/proposedRouteHeading/coords/${proposedLonCheck}:${proposedLatCheck}/heading/${proposedHeadingCheck}/time/${timestamp}`);
+                            //get relative angle between ship's heading in proposed route and wave direction
+                            const proposedRouteDataCheck = await httpClient.getData(`/proposedRouteHeading/coords/${proposedLonCheck}:${proposedLatCheck}/heading/${proposedHeadingCheck}/time/${timestamp}`);
 
-                                encounterAngleProposed = proposedRouteDataCheck[0][0];
+                            encounterAngleProposed = proposedRouteDataCheck[0][0];
 
-                                if ((encounterAngleProposed < 60 || encounterAngleProposed > 115) && (encounterAngleProposed < 235 || encounterAngleProposed > 270)) {
-                                    proposedRoutePolylineCenters.push(newPolyCenter);
-                                    this._proposedPolylineMarker.addTo(this._baseLayer);
-                                    this._proposedPolylineMarker.setLatLng(newPolyCenter);
-                                    proposedRoute = proposedRouteData[i];
+                            if ((encounterAngleProposed < 60 || encounterAngleProposed > 115) && (encounterAngleProposed < 235 || encounterAngleProposed > 270)) {
+                                proposedRoutePolylineCenters.push(newPolyCenter);
+                                this._proposedPolylineMarker.addTo(this._baseLayer);
+                                this._proposedPolylineMarker.setLatLng(newPolyCenter);
+                                proposedRoute = proposedRouteData[i];
 
-                                    found = true;
+                                found = true;
 
-                                    const propWaveHeight = proposedRoute[2];
-                                    const propWavePeriod = proposedRoute[5];
-                                    const propWaveAngle = proposedRoute[3];
-                                    const propWindSpeed = proposedRoute[6];
-                                    console.log(initWindSpeed, propWindSpeed);
-                                    //Calculate route statistics
-                                    decreaseWH = (initWaveHeight - propWaveHeight) / initWaveHeight * 100;
-                                    decreaseWP = (initWavePeriod - propWavePeriod) / initWavePeriod * 100;
-                                    decreaseWD = Math.abs(initWaveAngle - propWaveAngle) / 360 * 100;
-                                    decreaseWS = (initWindSpeed - propWindSpeed) / initWindSpeed * 100;
+                                const propWaveHeight = proposedRoute[2];
+                                const propWavePeriod = proposedRoute[5];
+                                const propWaveAngle = proposedRoute[3];
+                                const propWindSpeed = proposedRoute[6];
 
-                                    decreaseWHArray.push(decreaseWH);
-                                    decreaseWPArray.push(decreaseWP);
-                                    decreaseWSArray.push(decreaseWS);
-                                    decreaseWDArray.push(decreaseWD);
-                                }
+                                //Calculate route statistics
+                                decreaseWH = (initWaveHeight - propWaveHeight) / initWaveHeight * 100;
+                                decreaseWP = (initWavePeriod - propWavePeriod) / initWavePeriod * 100;
+                                decreaseWD = Math.abs(initWaveAngle - propWaveAngle) / 360 * 100;
+                                decreaseWS = (initWindSpeed - propWindSpeed) / initWindSpeed * 100;
+
+                                decreaseWHArray.push(decreaseWH);
+                                decreaseWPArray.push(decreaseWP);
+                                decreaseWSArray.push(decreaseWS);
+                                decreaseWDArray.push(decreaseWD);
                             }
                         }
                     }
@@ -586,12 +582,12 @@ window.addEventListener('load', async (event) => {
                     sumWD += d
                 });
                 avgDecreaseWD = sumWD / decreaseWDArray.length;
-                
+
                 decreaseWSArray.forEach((s) => {
-                        sumWS += s
-                    });
+                    sumWS += s
+                });
                 avgDecreaseWS = sumWS / decreaseWSArray.length;
-                
+
                 let prefix = null;
 
                 if (avgDecreaseWS > 0) {
@@ -600,7 +596,7 @@ window.addEventListener('load', async (event) => {
                     prefix = 'Increase';
                     avgDecreaseWS = Math.abs(avgDecreaseWS);
                 }
-
+    
                 routeLengthDiff = (sumProposedRouteDistance - sumInitialRouteDistance) / sumInitialRouteDistance * 100;
 
                 statisticsPopupContent = `
