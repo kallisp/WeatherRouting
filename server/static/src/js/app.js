@@ -434,7 +434,6 @@ window.addEventListener('load', async (event) => {
         //move time slider in each route's initial timestamp when route selected
         const time = moment.utc(e.detail.timestamp).valueOf();
         map.timeDimension.setCurrentTime(time);
-
         map.closePopup();
     })
 
