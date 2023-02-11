@@ -86,8 +86,9 @@ def proposedRoute(lon, lat, heading, timestamp):
     cur = conn.cursor()
     cur.execute("""SELECT latitude, longitude, vhm0, encounterangle, vmdr, vtm10, speed FROM (
                    SELECT ts, latitude, longitude, vhm0, vmdr, vtm10, speed, geom, ABS(vmdr - %s) as encounterangle 
-	               FROM climate) AS c
-                   WHERE (ts=%s AND vhm0<4.5 AND vtm10<8  AND speed<19 AND (encounterangle < 60 OR encounterangle > 115) AND (encounterangle < 235 OR encounterangle > 270)) 
+	               FROM climate
+                   WHERE (ts=%s AND vhm0<4.5 AND vtm10<8  AND speed<19)) AS c
+                   WHERE ((encounterangle < 60 OR encounterangle > 120) AND (encounterangle < 240 OR encounterangle > 300)) 
                    ORDER BY geom::geometry <-> 'SRID=4326;POINT(%s %s)'::geometry LIMIT 10""",             
                    (float(heading), timestamp, float(lon), float(lat)))                                     
     proposedRoutData = cur.fetchall()                                                                       
