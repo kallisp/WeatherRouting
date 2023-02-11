@@ -521,7 +521,7 @@ window.addEventListener('load', async (event) => {
 
                             encounterAngleProposed = proposedRouteDataCheck[0][0];
 
-                            if ((encounterAngleProposed < 60 || encounterAngleProposed > 115) && (encounterAngleProposed < 235 || encounterAngleProposed > 270)) {
+                            if ((encounterAngleProposed < 60 || encounterAngleProposed > 120) && (encounterAngleProposed < 240 || encounterAngleProposed > 300)) {
                                 proposedRoutePolylineCenters.push(newPolyCenter);
                                 this._proposedPolylineMarker.addTo(this._baseLayer);
                                 this._proposedPolylineMarker.setLatLng(newPolyCenter);
