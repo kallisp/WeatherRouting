@@ -489,7 +489,7 @@ window.addEventListener('load', async (event) => {
             this._popupInitRoute.setContent(popupInitRouteContent);
 
             //check the weather thresholds 
-            if ((initWaveHeight < 4.5 || initWavePeriod < 8) && (initWindSpeed < 19 || ((initWaveAngle < 60 || initWaveAngle > 120) && (initWaveAngle < 240 || initWaveAngle > 300)))) {
+            if ((initWaveHeight < 4.5 || initWavePeriod < 8) && (initWindSpeed < 19 || ((initWaveAngle < 60 || initWaveAngle > 115) && (initWaveAngle < 235 || initWaveAngle > 270)))) {
                 proposedRoutePolylineCenters.push([lat, lon]);
                 this._proposedPolylineMarker.removeFrom(this._baseLayer);
             }
@@ -515,17 +515,28 @@ window.addEventListener('load', async (event) => {
                             const proposedLatCheck = newLat;
                             const proposedLonCheck = newLng;
                             const proposedHeadingCheck = angleDegProposed;
+                            //const acceptedDistance = speed * 3 // the accepted distance is calculated for the next 3h which is our timestamp (time = 3h) sp as the vessel to have arrived to next point
+
+                            //calculate the distance between the initial and proposed route (for the current lat, lon points)
+                            // const initLatLng = L.latLng(startLat, startLon);
+                            // const proposedLatLng = L.latLng(destLat, destLon);
+                            // const distanceDiff = initLatLng.distanceTo(proposedLatLng)* 0.0005399568; //convert meters to nautical miles
+                            // // if (distanceDiff > acceptedDistance) {
+                            // //     alert("No accepted distance!")
+                            //    console.log(distanceDiff, acceptedDistance);
+                            // // }
 
                             //get relative angle between ship's heading in proposed route and wave direction
                             const proposedRouteDataCheck = await httpClient.getData(`/proposedRouteHeading/coords/${proposedLonCheck}:${proposedLatCheck}/heading/${proposedHeadingCheck}/time/${timestamp}`);
 
                             encounterAngleProposed = proposedRouteDataCheck[0][0];
 
-                            if ((encounterAngleProposed < 60 || encounterAngleProposed > 120) && (encounterAngleProposed < 240 || encounterAngleProposed > 300)) {
+                            if ((encounterAngleProposed < 60 || encounterAngleProposed > 115) && (encounterAngleProposed < 235 || encounterAngleProposed > 270)) {
                                 proposedRoutePolylineCenters.push(newPolyCenter);
                                 this._proposedPolylineMarker.addTo(this._baseLayer);
                                 this._proposedPolylineMarker.setLatLng(newPolyCenter);
                                 proposedRoute = proposedRouteData[i];
+
 
                                 found = true;
 
@@ -595,7 +606,7 @@ window.addEventListener('load', async (event) => {
                     prefix = 'Increase';
                     avgDecreaseWS = Math.abs(avgDecreaseWS);
                 }
-    
+
                 routeLengthDiff = (sumProposedRouteDistance - sumInitialRouteDistance) / sumInitialRouteDistance * 100;
 
                 statisticsPopupContent = `

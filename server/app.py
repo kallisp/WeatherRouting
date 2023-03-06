@@ -79,8 +79,9 @@ def initialRoute(lon, lat, heading, timestamp):
     if (len(initialRouteData) >= 0 ) :
         return jsonify(initialRouteData) 
     return jsonify([])
+    
 
-@app.route('/proposedRoute/coords/<lon>:<lat>/heading/<heading>/time/<timestamp>', methods=['GET'])     
+@app.route('/proposedRoute/coords/<lon>:<lat>/heading/<heading>/time/<timestamp>', methods=['GET']) 
 def proposedRoute(lon, lat, heading, timestamp):  
     conn = get_db_connection()
     cur = conn.cursor()
@@ -88,7 +89,7 @@ def proposedRoute(lon, lat, heading, timestamp):
                    SELECT ts, latitude, longitude, vhm0, vmdr, vtm10, speed, geom, ABS(vmdr - %s) as encounterangle 
 	               FROM climate
                    WHERE (ts=%s AND vhm0<4.5 AND vtm10<8  AND speed<19)) AS c
-                   WHERE ((encounterangle < 60 OR encounterangle > 120) AND (encounterangle < 240 OR encounterangle > 300)) 
+                   WHERE ((encounterangle < 60 OR encounterangle > 115) AND (encounterangle < 235 OR encounterangle > 270))
                    ORDER BY geom::geometry <-> 'SRID=4326;POINT(%s %s)'::geometry LIMIT 10""",             
                    (float(heading), timestamp, float(lon), float(lat)))                                     
     proposedRoutData = cur.fetchall()                                                                       
